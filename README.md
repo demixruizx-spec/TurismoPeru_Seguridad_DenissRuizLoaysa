@@ -1,10 +1,29 @@
+cat << 'EOF' > README.md
 # TurismoPeru_Seguridad_DenissRuizLoaysa
-## 02. Importación y Exportación de Datos (BCP y Staging)
 
-Para la carga masiva de clientes desde el archivo `clientes.csv`, se implementó una estrategia en 5 etapas utilizando una tabla de staging (`DJRL.cliente_importacion`):
+## 1. Descripción del Proyecto
+Este proyecto implementa una solución integral de administración, seguridad, importación de datos masiva mediante BCP/Staging, políticas de respaldos y un módulo de reportes analíticos para la base de datos `TURISMOPERU_DJRL` de la empresa TurismoPeru.
 
-1. **Creación de Tabla Staging:** Se diseñó la tabla `DJRL.cliente_importacion` con campos de tipo text/varchar para evitar fallos por conversión de formatos en la carga inicial.
-2. **Carga Masiva con BULK INSERT:** Se ejecutó el comando `BULK INSERT` utilizando UTF-8 (`CODEPAGE = '65001'`) y delimitador de campos por punto y coma (`;`).
-3. **Validación e Identificación de Duplicados:** Se ejecutaron consultas `GROUP BY Documento HAVING COUNT(*) > 1` para auditoría de registros duplicados en el archivo original.
-4. **Depuración mediante Funciones de Ventana:** Mediante `ROW_NUMBER() OVER(PARTITION BY Documento ORDER BY Documento)`, se filtraron los registros descartando repeticiones (`RowNum = 1`).
-5. **Inserción a Tabla Definitiva:** Se insertaron los datos validados en la tabla final `DJRL.persona`, asegurando que no existieran previamente en el sistema mediante la cláusula `NOT IN`.
+---
+
+## 2. Tecnologías Utilizadas
+* **Motor de Base de Datos:** Microsoft SQL Server
+* **Herramientas de Administración:** SQL Server Management Studio (SSMS), BCP (Bulk Copy Program)
+* **Control de Versiones:** Git / GitHub
+* **Visualización y Reportes:** Power BI / Python (`pandas`, `matplotlib`, `plotly`)
+
+---
+
+## 3. Requisitos del Sistema
+* SQL Server 2019 o superior.
+* SQL Server Management Studio (SSMS).
+* Herramientas de línea de comandos de SQL Server (BCP).
+* Python 3.10+ (en caso de utilizar la Alternativa B de reportes).
+* Power BI Desktop (en caso de utilizar la Alternativa A de reportes).
+
+---
+
+## 4. Configuración del Entorno
+1. Clonar el repositorio:
+   ```bash
+   git clone [https://github.com/demixruizx-spec/TurismoPeru_Seguridad_DenissRuizLoaysa.git](https://github.com/demixruizx-spec/TurismoPeru_Seguridad_DenissRuizLoaysa.git)
