@@ -1,4 +1,3 @@
-cat << 'EOF' > README.md
 # TurismoPeru_Seguridad_DenissRuizLoaysa
 
 ## 1. Descripción del Proyecto
