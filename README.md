@@ -28,7 +28,7 @@ analítico automatizado sobre clientes, reservas y pagos.
    ```bash
    git clone [https://github.com/TU_USUARIO/TurismoPeru_Seguridad_DenissRuizLoaysa.git](https://github.com/TU_USUARIO/TurismoPeru_Seguridad_DenissRuizLoaysa.git)
    cd TurismoPeru_Seguridad_DenissRuizLoaysa
-TurismoPeru_Seguridad_DenissRuizLoaysa/
+## 5. TurismoPeru_Seguridad_DenissRuizLoaysa/
 ├── .env.example
 ├── .gitignore
 ├── README.md
