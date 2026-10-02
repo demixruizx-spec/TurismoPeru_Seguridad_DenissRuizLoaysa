@@ -4,38 +4,44 @@ import pyodbc
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
+from dotenv import load_dotenv
 
 warnings.filterwarnings("ignore")
+
+# Cargar variables del entorno desde .env
+load_dotenv()
 
 CARPETA_GRAFICOS = Path(__file__).parent.parent.parent / "evidencias"
 CARPETA_GRAFICOS.mkdir(exist_ok=True)
 
-SERVER = "ESPACEESM"
-DATABASE = "TURISMOPERU_DJRL"
-conn_str = f"DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;"
+SERVER = os.getenv("DB_SERVER", "ESPACEESM")
+DATABASE = os.getenv("DB_DATABASE", "TURISMOPERU_DJRL")
+USER = os.getenv("DB_USER")
+PASSWORD = os.getenv("DB_PASSWORD")
+TRUSTED = os.getenv("USE_TRUSTED_CONNECTION", "no")
+
+# Construir cadena de conexión basada exclusivamente en .env
+if TRUSTED.lower() == "yes" or not USER:
+    conn_str = f"DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;"
+else:
+    conn_str = f"DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};UID={USER};PWD={PASSWORD};"
 
 def obtener_columnas(conn, tabla):
-    """Obtiene la lista de columnas reales de una tabla."""
     query = f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tabla}' AND TABLE_SCHEMA = 'DJRL'"
     cursor = conn.cursor()
     cursor.execute(query)
-    cols = [row[0].lower() for row in cursor.fetchall()]
-    return cols
+    return [row[0].lower() for row in cursor.fetchall()]
 
 def obtener_datos():
-    """Inspecciona dinámicamente las columnas y construye la consulta SQL adaptada."""
     conn = pyodbc.connect(conn_str)
     
     cols_reserva = obtener_columnas(conn, 'reserva')
     cols_pago = obtener_columnas(conn, 'pago')
-    cols_persona = obtener_columnas(conn, 'persona')
     
-    # Detectar columna de ID de cliente en reserva
     c_res_cliente = 'id_cliente' if 'id_cliente' in cols_reserva else ('id_persona' if 'id_persona' in cols_reserva else cols_reserva[0])
     c_res_estado = 'estado' if 'estado' in cols_reserva else ('estado_reserva' if 'estado_reserva' in cols_reserva else "NULL")
     c_res_fecha = 'fecha_reserva' if 'fecha_reserva' in cols_reserva else ('fecha' if 'fecha' in cols_reserva else "NULL")
     
-    # Detectar columna de medio de pago
     c_pago_medio = 'medio_pago' if 'medio_pago' in cols_pago else ('metodo_pago' if 'metodo_pago' in cols_pago else "NULL")
     c_pago_monto = 'monto' if 'monto' in cols_pago else ('total' if 'total' in cols_pago else "0")
 
